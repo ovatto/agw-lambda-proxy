@@ -37,7 +37,7 @@ the request and response processing, including response headers.
 
 Assuming you've put "index.handler" as your Lambda handler value you can use
 following index.js for simply returning a response with body "static string",
-status code 200 and default headers (see [CORS & response headers](#cors-response-headers)
+status code 200 and default headers (see [CORS & response headers](#cors--response-headers)
 for details).
 
 ```javascript
@@ -85,11 +85,22 @@ attribute|When specified|Default value
 ---------|--------------|-------------
 statusCode|Parsed as an integer HTTP status code. If parsing fails, default is used.|200
 body|If string, returned as is. Otherwise stringified with JSON.stringify|''
-headers|Properties used as HTTP response headers.|See [CORS & response headers](#cors-response-headers)
+headers|Properties used as HTTP response headers.|See [CORS & response headers](#cors--response-headers)
 
 If the returned object does not have any of the attributes **statusCode**,
 **body** or **headers** the object is stringified as response body and default
-status code 200 and headers are used.
+status code 200 and headers are used:
+
+```javascript
+const delegate = (event, context) => {
+  return {
+    foo: 'bar'
+  }
+}
+module.exports = {
+  handler: require('agw-lambda-proxy').createHandler(delegate)
+}
+```
 
 
 ## CORS & response headers
