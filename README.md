@@ -7,6 +7,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/agw-lambda-proxy"><img src="https://img.shields.io/npm/v/agw-lambda-proxy.svg" alt="npm version"></a>
   <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="Standard - JavaScript Style Guide"></a>
+  <a href="https://travis-ci.org/ovatto/agw-lambda-proxy"><img src="https://travis-ci.org/ovatto/agw-lambda-proxy.svg?branch=master" alt="build status"></a>
 </p>
 
 ## What is this?
