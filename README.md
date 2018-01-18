@@ -8,12 +8,12 @@
   <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="Standard - JavaScript Style Guide"></a>
 </p>
 
-## Overview
+## What is this?
 
-Adapter module for creating Lambda functions for handling AWS API Gateway Lambda
-Proxy Integration calls. See [docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-api-as-simple-proxy-for-lambda.html) for details.
+Helper module for creating Lambda functions for handling AWS API Gateway Lambda
+Proxy Integration calls. See [AWS docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-api-as-simple-proxy-for-lambda.html) for details.
 
-Provides common error handling and response formatting.
+Provides common error handling and response formatting for proxy Lambda functions.
 
 ## Installation
 
