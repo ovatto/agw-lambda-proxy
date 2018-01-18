@@ -12,18 +12,26 @@ const formatBody = (body) => {
   return JSON.stringify(body)
 }
 
+const isLambdaResponse = (response) => {
+  return response &&
+    typeof response === 'object' &&
+    ['statusCode', 'body', 'headers'].find(f => Object.prototype.hasOwnProperty.call(response, f))
+}
+
+const DEFAULT_STATUS_CODE = 200
+
 const formatResponse = (response, options) => {
-  if (!response || typeof response === 'string') {
+  if (isLambdaResponse(response)) {
     return {
-      statusCode: 200,
-      body: response || '',
-      headers: formatHeaders(options)
+      statusCode: Number.parseInt(response.statusCode) || DEFAULT_STATUS_CODE,
+      body: formatBody(response.body),
+      headers: formatHeaders(options, response.headers)
     }
   }
   return {
-    statusCode: response.statusCode || 200,
-    body: formatBody(response.body),
-    headers: formatHeaders(options, response.headers)
+    statusCode: DEFAULT_STATUS_CODE,
+    body: formatBody(response),
+    headers: formatHeaders(options)
   }
 }
 

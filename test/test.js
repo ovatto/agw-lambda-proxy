@@ -46,19 +46,19 @@ describe('agw-lambda-proxy', function () {
           assert.deepEqual(response.headers, defaultHeaders, 'Default headers should be returned when response doesn\'t specify headers')
         })
     })
-    it('should return the default response when delegate response doesn\'t contain any valid fields', function () {
-      return asPromise(callback => createHandler(() => ({}))({}, {}, callback))
-        .then((response) => {
-          assert.equal(response.body, '', 'Response body should be empty when delegate does not specify body')
-          assert.equal(response.statusCode, 200, 'Default status code 200 should be returned when response doesn\'t specify status code')
-          assert.deepEqual(response.headers, defaultHeaders, 'Default headers should be returned when response doesn\'t specify headers')
-        })
-    })
     it('should return the "statusCode" from response', function () {
       return asPromise(callback => createHandler(() => ({statusCode: 123}))({}, {}, callback))
         .then((response) => {
           assert.equal(response.body, '', 'Response body should be empty when delegate does not specify body')
           assert.equal(response.statusCode, 123, 'Response "statusCode" should match with delegate response\'s "statusCode"')
+          assert.deepEqual(response.headers, defaultHeaders, 'Default headers should be returned when response doesn\'t specify headers')
+        })
+    })
+    it('should use default when "statusCode" from response is not valid', function () {
+      return asPromise(callback => createHandler(() => ({statusCode: 'xxx'}))({}, {}, callback))
+        .then((response) => {
+          assert.equal(response.body, '', 'Response body should be empty when delegate does not specify body')
+          assert.equal(response.statusCode, 200, 'Default status code 200 should be returned when response doesn\'t specify a valid status code')
           assert.deepEqual(response.headers, defaultHeaders, 'Default headers should be returned when response doesn\'t specify headers')
         })
     })
@@ -109,6 +109,14 @@ describe('agw-lambda-proxy', function () {
           assert.equal(response.body, '', 'Response body should be empty when delegate does not specify body')
           assert.equal(response.statusCode, 200, 'Default status code 200 should be returned when response doesn\'t specify status code')
           assert.deepEqual(response.headers, optionsHeaders, '"options.headers" should be returned when response doesn\'t specify headers')
+        })
+    })
+    it('should return the returned object as stringified body when netiher statusCode, body nor headers is specified', function () {
+      return asPromise(callback => createHandler(() => ({foo: 'bar'}))({}, {}, callback))
+        .then((response) => {
+          assert.equal(response.body, '{"foo":"bar"}', 'Response body should the stringified delegate return object')
+          assert.equal(response.statusCode, 200, 'Default status code 200 should be returned when response doesn\'t specify status code')
+          assert.deepEqual(response.headers, defaultHeaders, 'Default headers should be returned when response doesn\'t specify headers')
         })
     })
     it('should accept a promise returning function as delegate', function () {
