@@ -105,6 +105,8 @@ module.exports = {
 
 ## CORS & response headers
 
+### Default headers
+
 By default, the Lambda function response will specify the header
 "Access-Control-Allow-Origin" with value "\*". The default behaviour can be
 changed by providing an **options** object with **headers** attribute in the
@@ -112,12 +114,19 @@ handler creation:
 
 ```javascript
 const defaultHeaders = {
-  someHeader: 'bar'
+  'Access-Control-Allow-Origin': 'https://github.com',
+  'Some-Other-Default-Header': 'header value'
 }
 module.exports = {
   handler: require('agw-lambda-proxy').createHandler(delegate, {headers:defaultHeaders})
 }
 ```
+
+Note that when overwritten default headers don't contain a value for
+'Access-Control-Allow-Origin' the response will not have the default CORS
+header.
+
+### Response headers
 
 When using the object format in the delegate return value the headers can
 also be specified for individual responses:
