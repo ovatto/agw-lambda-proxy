@@ -13,17 +13,10 @@ const formatBody = (body) => {
 }
 
 const formatResponse = (response, options) => {
-  if (!response) {
+  if (!response || typeof response === 'string') {
     return {
       statusCode: 200,
-      body: '',
-      headers: formatHeaders(options)
-    }
-  }
-  if (typeof response === 'string') {
-    return {
-      statusCode: 200,
-      body: response,
+      body: response || '',
       headers: formatHeaders(options)
     }
   }
@@ -33,6 +26,13 @@ const formatResponse = (response, options) => {
     headers: formatHeaders(options, response.headers)
   }
 }
+
+const createErrorResponse = (error) => ({
+  statusCode: error.code || 500,
+  body: {
+    message: error.message
+  }
+})
 
 const DEFAULT_OPTIONS = {
   headers: {
@@ -47,17 +47,8 @@ const handler = (delegate, options = DEFAULT_OPTIONS) => {
   return (event, context, callback) => {
     return Promise.resolve()
       .then(() => delegate(event, context))
-      .catch((error) => {
-        return {
-          statusCode: error.code || 500,
-          body: JSON.stringify({
-            message: error.message
-          })
-        }
-      })
-      .then((response) => {
-        callback(null, formatResponse(response, options))
-      })
+      .catch(createErrorResponse)
+      .then((response) => callback(null, formatResponse(response, options)))
   }
 }
 
