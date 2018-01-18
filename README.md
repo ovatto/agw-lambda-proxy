@@ -5,6 +5,7 @@
 </h1>
 
 <p align="center">
+  <a href="https://www.npmjs.com/package/agw-lambda-proxy"><img src="https://img.shields.io/npm/v/agw-lambda-proxy.svg" alt="npm version"></a>
   <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="Standard - JavaScript Style Guide"></a>
 </p>
 
