@@ -1,4 +1,14 @@
-# AWS API Gateway Lambda Proxy Integration module
+<h1 align="center">
+  AWS API Gateway Lambda Proxy Integration module
+  <br>
+  <br>
+</h1>
+
+<p align="center">
+  <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="Standard - JavaScript Style Guide"></a>
+</p>
+
+## Overview
 
 Adapter module for creating Lambda functions for handling AWS API Gateway Lambda
 Proxy Integration calls. See [docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-api-as-simple-proxy-for-lambda.html) for details.
@@ -171,3 +181,7 @@ const delegateThatThrows = (event, context) => {
 
 Error's message will be included in the response body in the "message"
 attribute.
+
+## License
+
+[MIT](LICENSE). Copyright (c) [Olli Vättö](https://github.com/ovatto).
