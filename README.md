@@ -15,20 +15,20 @@ npm install agw-lambda-proxy
 
 ## Usage
 
-The module exports a single function that can be used for generating the Lambda
-handler function. The generated function handles the **event**, **context**, and
-**callback** parameters that the Lambda runtime passes so it can be directly
-used as the handler for your Lambda function.
+The module exports contains a function **createHandler** that can be used for
+generating the Lambda handler function. The generated function handles the
+**event**, **context**, and **callback** parameters that the Lambda runtime
+passes so it can be directly used as the handler for your Lambda function.
 
 The generator function accepts two parameters: **delegate** and **options**. The
 **delegate** is a mandatory parameter an must be a function. This function is
-defined by the caller and can be used for processing the Lambda request. When
+defined by the caller and can be used for processing the Lambda request - when
 Lambda function is invoked the framework passes the **event** and **context**
 parameters to the delegate for request processing. The return value of the
-delegate function is used for generating the Lambda function response. The
-return value should be either a promise or a direct value if asynchronous
-processing is not needed. Rejections and thrown errors are automatically
-handled. See [Error handling](#error-handling) for details.
+delegate function is used for generating the Lambda function response and it
+should be either a promise or a direct value if asynchronous processing is not
+needed. Rejections and thrown errors are automatically handled. See
+[Error handling](#error-handling) for details.
 
 The **options** parameter can be used for overriding some of the defaults in
 the request and response processing, including response header.
@@ -43,7 +43,7 @@ const delegate = (event, context) => {
   return Promise.resolve('static string')
 }
 module.exports = {
-  handler: require('agw-lambda-proxy')(delegate)
+  handler: require('agw-lambda-proxy').createHandler(delegate)
 }
 ```
 
@@ -72,12 +72,53 @@ const delegate = (event, context) => {
     })
 }
 module.exports = {
-  handler: require('agw-lambda-proxy')(delegate)
+  handler: require('agw-lambda-proxy').createHandler(delegate)
 }
 ```
 
 The response **body** can be either a string or an object. In case of a string
 the **body** is used as-is. Objects are always stringified.
+
+## CORS & response headers
+
+By default, the Lambda function response will specify the header
+"Access-Control-Allow-Origin" with value "\*". The default behaviour can be
+changed by providing an **options** object with **headers** attribute in the
+handler creation:
+
+```javascript
+const defaultHeaders = {
+  someHeader: 'bar'
+}
+module.exports = {
+  handler: require('agw-lambda-proxy').createHandler(delegate, {headers:defaultHeaders})
+}
+```
+
+When using the object format in the delegate return value the headers can
+also be specified for individual responses:
+
+```javascript
+const delegate = (event, context) => {
+  return {
+    body: 'headers from return value will overwrite default headers if same keys are found',
+    headers: {
+      overwrite: 'from response'
+    }
+  }
+}
+const defaultHeaders = {
+  overwrite: 'from defaults'
+}
+module.exports = {
+  handler: require('agw-lambda-proxy').createHandler(delegate, {headers:defaultHeaders})
+}
+```
+
+In the example above the response headers will contain value "from response" for
+the header "overwrite" as delegate return value headers will take precedence
+over default header values.
+
 
 ## Error handling
 

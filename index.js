@@ -40,7 +40,7 @@ const DEFAULT_OPTIONS = {
   }
 }
 
-const handler = (delegate, options = DEFAULT_OPTIONS) => {
+const createHandler = (delegate, options = DEFAULT_OPTIONS) => {
   if (typeof delegate !== 'function') {
     throw new Error('"delegate" must be a function')
   }
@@ -52,4 +52,4 @@ const handler = (delegate, options = DEFAULT_OPTIONS) => {
   }
 }
 
-module.exports = handler
+module.exports = {createHandler}
