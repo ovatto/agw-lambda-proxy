@@ -32,6 +32,15 @@ module.exports = {
 }
 ```
 
+## Delegate function
+
+The module passes the Lambda handler function parameters **event** and **context**
+to the delegate function. The delegate function is then free to process the
+request, and once done, should return a promise or a direct value.
+
+Rejections and thrown errors are automatically handled. See [Error handling](#error-handling)
+for details.
+
 ## Response formatting
 
 The delegate function can return the response in few different ways. For simple
