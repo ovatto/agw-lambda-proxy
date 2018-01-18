@@ -15,13 +15,28 @@ npm install agw-lambda-proxy
 
 ## Usage
 
-The module exports a function that can be used to generate the Lambda handler
-function i.e. the returning function handles the **event**, **context**, and
-**callback** parameters that the Lambda runtime passes to the function.
+The module exports a single function that can be used for generating the Lambda
+handler function. The generated function handles the **event**, **context**, and
+**callback** parameters that the Lambda runtime passes so it can be directly
+used as the handler for your Lambda function.
 
-The actual function response is generated using caller provided delegate
-function that can return either a direct value or a promise. Assuming you've put
-"index.handler" as your Lambda handler value you can use following index.js:
+The generator function accepts two parameters: **delegate** and **options**. The
+**delegate** is a mandatory parameter an must be a function. This function is
+defined by the caller and can be used for processing the Lambda request. When
+Lambda function is invoked the framework passes the **event** and **context**
+parameters to the delegate for request processing. The return value of the
+delegate function is used for generating the Lambda function response. The
+return value should be either a promise or a direct value if asynchronous
+processing is not needed. Rejections and thrown errors are automatically
+handled. See [Error handling](#error-handling) for details.
+
+The **options** parameter can be used for overriding some of the defaults in
+the request and response processing, including response header.
+
+### Example
+
+Assuming you've put "index.handler" as your Lambda handler value you can use
+following index.js for simply returning a response with body "static string":
 
 ```javascript
 const delegate = (event, context) => {
@@ -32,25 +47,16 @@ module.exports = {
 }
 ```
 
-## Delegate function
-
-The module passes the Lambda handler function parameters **event** and **context**
-to the delegate function. The delegate function is then free to process the
-request, and once done, should return a promise or a direct value.
-
-Rejections and thrown errors are automatically handled. See [Error handling](#error-handling)
-for details.
-
 ## Response formatting
 
 The delegate function can return the response in few different ways. For simple
 responses the function can return a string value. In this case the response's
-body will be the returned string and default status code 200 is returned. This
+body will be the returned string and default status code 200 is used. This
 case is shown above.
 
 If the return value is an object the framework will use fields **statusCode**,
-**body**, and **headers** from the response. If any of the values is missing or
-in incorrect format default values are returned.
+**body**, and **headers** from the return value. If any of the values is missing
+or in incorrect format default values are returned.
 
 ```javascript
 const delegate = (event, context) => {
