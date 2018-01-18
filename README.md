@@ -21,7 +21,7 @@ generating the Lambda handler function. The generated function handles the
 passes so it can be directly used as the handler for your Lambda function.
 
 The generator function accepts two parameters: **delegate** and **options**. The
-**delegate** is a mandatory parameter an must be a function. This function is
+**delegate** is a mandatory parameter and must be a function. This function is
 defined by the caller and can be used for processing the Lambda request - when
 Lambda function is invoked the framework passes the **event** and **context**
 parameters to the delegate for request processing. The return value of the
@@ -31,12 +31,14 @@ needed. Rejections and thrown errors are automatically handled. See
 [Error handling](#error-handling) for details.
 
 The **options** parameter can be used for overriding some of the defaults in
-the request and response processing, including response header.
+the request and response processing, including response headers.
 
 ### Example
 
 Assuming you've put "index.handler" as your Lambda handler value you can use
-following index.js for simply returning a response with body "static string":
+following index.js for simply returning a response with body "static string",
+status code 200 and default headers (see [CORS & response headers](#cors-response-headers)
+for details).
 
 ```javascript
 const delegate = (event, context) => {
@@ -54,9 +56,10 @@ responses the function can return a string value. In this case the response's
 body will be the returned string and default status code 200 is used. This
 case is shown above.
 
-If the return value is an object the framework will use fields **statusCode**,
-**body**, and **headers** from the return value. If any of the values is missing
-or in incorrect format default values are returned.
+If the return value is an object and the object contains one of the attributes
+**statusCode**, **body**, or **headers** the Lambda response is generated from
+these attributes and default values for missing attribute. If the **body** is
+not a string value it is automatically stringified.
 
 ```javascript
 const delegate = (event, context) => {
@@ -76,8 +79,18 @@ module.exports = {
 }
 ```
 
-The response **body** can be either a string or an object. In case of a string
-the **body** is used as-is. Objects are always stringified.
+The handling for each attribute is specified in the table below:
+
+attribute|When specified|Default value
+---------|--------------|-------------
+statusCode|Parsed as an integer HTTP status code. If parsing fails, default is used.|200
+body|If string, returned as is. Otherwise stringified with JSON.stringify|''
+headers|Properties used as HTTP response headers.|See [CORS & response headers](#cors-response-headers)
+
+If the returned object does not have any of the attributes **statusCode**,
+**body** or **headers** the object is stringified as response body and default
+status code 200 and headers are used.
+
 
 ## CORS & response headers
 
