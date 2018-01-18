@@ -1,6 +1,6 @@
 {
   "name": "agw-lambda-proxy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AWS API Gateway Lambda Proxy Integration module",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "node": ">=6.0.0"
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/ovatto/agw-lambda-proxy"
+    "type": "git",
+    "url": "https://github.com/ovatto/agw-lambda-proxy"
   }
 }
