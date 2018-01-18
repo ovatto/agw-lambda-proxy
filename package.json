@@ -1,7 +1,7 @@
 {
-  "name": "lambda-proxy-promise",
+  "name": "agw-lambda-proxy",
   "version": "1.0.0",
-  "description": "AWS Lambda proxy integration adapter.",
+  "description": "AWS API Gateway Lambda Proxy Integration module",
   "main": "index.js",
   "scripts": {
     "lint": "eslint index.js test",
@@ -10,7 +10,6 @@
   },
   "author": "Olli Vättö <olli.vatto@me.com>",
   "license": "UNLICENSED",
-  "dependencies": {},
   "devDependencies": {
     "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-plugin-import": "^2.8.0",
