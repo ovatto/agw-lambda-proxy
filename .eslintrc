@@ -1,0 +1,9 @@
+{
+  rules: {
+    quote-props: ['error', 'as-needed'],
+    array-callback-return: ['error'],
+    prefer-template: 'error',
+    no-param-reassign: 'error'
+  },
+  extends: 'standard'
+}

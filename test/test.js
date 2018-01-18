@@ -80,7 +80,7 @@ describe('lambda-proxy-promise', function () {
     })
     it('should return the "headers" from response as well as default headers when they\'re not overwritten', function () {
       const responseHeaders = {
-        'MY_HEADER': 'VALUE'
+        MY_HEADER: 'VALUE'
       }
       return asPromise(callback => handler(() => ({headers: responseHeaders}))({}, {}, callback))
         .then((response) => {
@@ -102,7 +102,7 @@ describe('lambda-proxy-promise', function () {
     })
     it('should return options headers when options has the key "headers"', function () {
       const optionsHeaders = {
-        'MY_DEFAULT_HEADER': 'value'
+        MY_DEFAULT_HEADER: 'value'
       }
       return asPromise(callback => handler(() => null, {headers: optionsHeaders})({}, {}, callback))
         .then((response) => {

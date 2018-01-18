@@ -35,7 +35,7 @@ const formatResponse = (response, options) => {
 }
 
 const DEFAULT_OPTIONS = {
-  'headers': {
+  headers: {
     'Access-Control-Allow-Origin': '*'
   }
 }
