@@ -181,8 +181,10 @@ const delegateThatThrows = (event, context) => {
 }
 ```
 
-Error's message will be included in the response body in the "message"
-attribute.
+Error message will be included in the response body in the "message"
+attribute. The response body contains also a direct link to CloudWatch Logs for
+this request. Returning the log link can be disabled by setting value **false**
+for key **cloudWatchLogLinks** in the generator options.
 
 ## License
 
