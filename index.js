@@ -1,3 +1,5 @@
+const url = require('url')
+
 const formatHeaders = (options, responseHeaders = {}) => {
   return Object.assign({}, options.headers, responseHeaders)
 }
@@ -35,28 +37,39 @@ const formatResponse = (response, options) => {
   }
 }
 
-const createErrorResponse = (error) => ({
+const createLogLink = (context) => url.format({
+  protocol: 'https',
+  host: `${process.env.AWS_REGION}.console.aws.amazon.com`,
+  pathname: '/cloudwatch/home',
+  search: `region=${process.env.AWS_REGION}`,
+  hash: `logEventViewer:group=${process.env.AWS_LAMBDA_LOG_GROUP_NAME};filter="${context.awsRequestId}"`
+})
+
+const requestErrorHandler = (context, options) => (error) => ({
   statusCode: error.code || 500,
   body: {
-    message: error.message
+    message: error.message,
+    log: options.cloudWatchLogLinks ? createLogLink(context) : undefined
   }
 })
 
 const DEFAULT_OPTIONS = {
   headers: {
     'Access-Control-Allow-Origin': '*'
-  }
+  },
+  cloudWatchLogLinks: true
 }
 
-const createHandler = (delegate, options = DEFAULT_OPTIONS) => {
+const createHandler = (delegate, options = {}) => {
   if (typeof delegate !== 'function') {
     throw new Error('"delegate" must be a function')
   }
+  const combinedOptions = Object.assign({}, DEFAULT_OPTIONS, options)
   return (event, context, callback) => {
     return Promise.resolve()
       .then(() => delegate(event, context))
-      .catch(createErrorResponse)
-      .then((response) => callback(null, formatResponse(response, options)))
+      .catch(requestErrorHandler(context, combinedOptions))
+      .then((response) => callback(null, formatResponse(response, combinedOptions)))
   }
 }
 
