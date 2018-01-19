@@ -138,17 +138,20 @@ describe('agw-lambda-proxy', function () {
     const context = {
       awsRequestId: 'UNIQUEREQUESTID'
     }
+    const options = {
+      logErrors: false
+    }
     beforeEach(function () {
       process.env.AWS_REGION = 'aws-region-id'
       process.env.AWS_LAMBDA_LOG_GROUP_NAME = '/aws/lambda/test-log-group'
     })
 
     it('Should return "500" with error message when delegate function throws', function () {
-      return asPromise(callback => createHandler(() => { throw new Error('thrown error message') })({}, context, callback))
+      return asPromise(callback => createHandler(() => { throw new Error('thrown error message') }, options)({}, context, callback))
         .then((response) => {
           assertResponseBody(response, {
             message: 'thrown error message',
-            log: 'https://aws-region-id.console.aws.amazon.com/cloudwatch/home?region=aws-region-id#logEventViewer:group=/aws/lambda/test-log-group;filter="UNIQUEREQUESTID"'
+            log: 'https://aws-region-id.console.aws.amazon.com/cloudwatch/home?region=aws-region-id#logEventViewer:group=/aws/lambda/test-log-group;filter=%22UNIQUEREQUESTID%22'
           })
           assert.equal(response.statusCode, 500, 'Default error status code should be 500')
           assert.deepEqual(response.headers, defaultHeaders, 'Default headers should be returned when response doesn\'t specify headers')
@@ -156,11 +159,11 @@ describe('agw-lambda-proxy', function () {
     })
 
     it('Should return "500" with error message when delegate function is rejected', function () {
-      return asPromise(callback => createHandler(() => Promise.reject(new Error('rejected error message')))({}, context, callback))
+      return asPromise(callback => createHandler(() => Promise.reject(new Error('rejected error message')), options)({}, context, callback))
         .then((response) => {
           assertResponseBody(response, {
             message: 'rejected error message',
-            log: 'https://aws-region-id.console.aws.amazon.com/cloudwatch/home?region=aws-region-id#logEventViewer:group=/aws/lambda/test-log-group;filter="UNIQUEREQUESTID"'
+            log: 'https://aws-region-id.console.aws.amazon.com/cloudwatch/home?region=aws-region-id#logEventViewer:group=/aws/lambda/test-log-group;filter=%22UNIQUEREQUESTID%22'
           })
           assert.equal(response.statusCode, 500, 'Default error status code should be 500')
           assert.deepEqual(response.headers, defaultHeaders, 'Default headers should be returned when response doesn\'t specify headers')
@@ -172,11 +175,11 @@ describe('agw-lambda-proxy', function () {
         const er = new Error('thrown not found')
         er.code = 404
         throw er
-      })({}, context, callback))
+      }, options)({}, context, callback))
         .then((response) => {
           assertResponseBody(response, {
             message: 'thrown not found',
-            log: 'https://aws-region-id.console.aws.amazon.com/cloudwatch/home?region=aws-region-id#logEventViewer:group=/aws/lambda/test-log-group;filter="UNIQUEREQUESTID"'
+            log: 'https://aws-region-id.console.aws.amazon.com/cloudwatch/home?region=aws-region-id#logEventViewer:group=/aws/lambda/test-log-group;filter=%22UNIQUEREQUESTID%22'
           })
           assert.equal(response.statusCode, 404, 'Should use the error\'s "code" as response "statusCode"')
           assert.deepEqual(response.headers, defaultHeaders, 'Default headers should be returned when response doesn\'t specify headers')
@@ -188,11 +191,11 @@ describe('agw-lambda-proxy', function () {
         const er = new Error('rejected not found')
         er.code = 404
         return Promise.reject(er)
-      })({}, context, callback))
+      }, options)({}, context, callback))
         .then((response) => {
           assertResponseBody(response, {
             message: 'rejected not found',
-            log: 'https://aws-region-id.console.aws.amazon.com/cloudwatch/home?region=aws-region-id#logEventViewer:group=/aws/lambda/test-log-group;filter="UNIQUEREQUESTID"'
+            log: 'https://aws-region-id.console.aws.amazon.com/cloudwatch/home?region=aws-region-id#logEventViewer:group=/aws/lambda/test-log-group;filter=%22UNIQUEREQUESTID%22'
           })
           assert.equal(response.statusCode, 404, 'Should use the error\'s "code" as response "statusCode"')
           assert.deepEqual(response.headers, defaultHeaders, 'Default headers should be returned when response doesn\'t specify headers')
@@ -204,7 +207,8 @@ describe('agw-lambda-proxy', function () {
         const er = new Error('not expecting log link')
         return Promise.reject(er)
       }, {
-        cloudWatchLogLinks: false
+        cloudWatchLogLinks: false,
+        logErrors: false
       })({}, context, callback))
         .then((response) => {
           assertResponseBody(response, {

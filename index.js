@@ -1,4 +1,5 @@
 const url = require('url')
+const querystring = require('querystring')
 
 const formatHeaders = (options, responseHeaders = {}) => {
   return Object.assign({}, options.headers, responseHeaders)
@@ -37,27 +38,35 @@ const formatResponse = (response, options) => {
   }
 }
 
+const formatFilterParameter = (requestId) => querystring.escape(`"${requestId}"`)
+
 const createLogLink = (context) => url.format({
   protocol: 'https',
   host: `${process.env.AWS_REGION}.console.aws.amazon.com`,
   pathname: '/cloudwatch/home',
   search: `region=${process.env.AWS_REGION}`,
-  hash: `logEventViewer:group=${process.env.AWS_LAMBDA_LOG_GROUP_NAME};filter="${context.awsRequestId}"`
+  hash: `logEventViewer:group=${process.env.AWS_LAMBDA_LOG_GROUP_NAME};filter=${formatFilterParameter(context.awsRequestId)}`
 })
 
-const requestErrorHandler = (context, options) => (error) => ({
-  statusCode: error.code || 500,
-  body: {
-    message: error.message,
-    log: options.cloudWatchLogLinks ? createLogLink(context) : undefined
+const requestErrorHandler = (context, options) => (error) => {
+  if (options.logErrors) {
+    console.error(error)
   }
-})
+  return {
+    statusCode: error.code || 500,
+    body: {
+      message: error.message,
+      log: options.cloudWatchLogLinks ? createLogLink(context) : undefined
+    }
+  }
+}
 
 const DEFAULT_OPTIONS = {
   headers: {
     'Access-Control-Allow-Origin': '*'
   },
-  cloudWatchLogLinks: true
+  cloudWatchLogLinks: true,
+  logErrors: true
 }
 
 const createHandler = (delegate, options = {}) => {
