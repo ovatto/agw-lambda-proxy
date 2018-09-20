@@ -181,10 +181,26 @@ const delegateThatThrows = (event, context) => {
 }
 ```
 
-Error message will be included in the response body in the "message"
-attribute. The response body contains also a direct link to CloudWatch Logs for
+The error message will be set to the "message" property of the response. 
+This can be customized by providing an **errorFormatter** function
+in the generator options.
+The response body contains also a direct link to CloudWatch Logs for
 this request. Returning the log link can be disabled by setting value **false**
 for key **cloudWatchLogLinks** in the generator options.
+
+```javascript
+const delegate = (event, context) => {
+  //
+}
+const options = {
+  cloudWatchLogLinks: false,
+  logErrors: true,
+  errorFormatter: (error) => error.message.substring(0, 20)
+}
+module.exports = {
+  handler: require('agw-lambda-proxy').createHandler(delegate, options)
+}
+```
 
 ## License
 
