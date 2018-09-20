@@ -55,7 +55,7 @@ const requestErrorHandler = (context, options) => (error) => {
   return {
     statusCode: error.code || 500,
     body: {
-      message: error.message,
+      message: options.errorFormatter(error),
       log: options.cloudWatchLogLinks ? createLogLink(context) : undefined
     }
   }
@@ -66,7 +66,8 @@ const DEFAULT_OPTIONS = {
     'Access-Control-Allow-Origin': '*'
   },
   cloudWatchLogLinks: true,
-  logErrors: true
+  logErrors: true,
+  errorFormatter: (error) => error.message
 }
 
 const createHandler = (delegate, options = {}) => {
