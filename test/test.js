@@ -29,6 +29,11 @@ describe('agw-lambda-proxy', function () {
         createHandler(null)
       }, /"delegate" must be a function/)
     })
+    it('should throw when errorFormatter option is not a function', function () {
+      assert.throws(() => {
+        createHandler(() => 'x', {errorFormatter: '{0}'})
+      }, /"errorFormatter" option must be a function/)
+    })
     it('should return a function when parameters are valid', function () {
       assert(typeof createHandler(() => 'x') === 'function')
     })

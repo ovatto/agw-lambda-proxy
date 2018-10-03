@@ -74,6 +74,9 @@ const createHandler = (delegate, options = {}) => {
   if (typeof delegate !== 'function') {
     throw new Error('"delegate" must be a function')
   }
+  if (options.hasOwnProperty('errorFormatter') && typeof options.errorFormatter !== 'function') {
+    throw new Error('"errorFormatter" option must be a function')
+  }
   const combinedOptions = Object.assign({}, DEFAULT_OPTIONS, options)
   return (event, context, callback) => {
     return Promise.resolve()
