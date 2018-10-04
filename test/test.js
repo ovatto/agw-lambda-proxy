@@ -29,6 +29,11 @@ describe('agw-lambda-proxy', function () {
         createHandler(null)
       }, /"delegate" must be a function/)
     })
+    it('should throw when errorFormatter option is not a function', function () {
+      assert.throws(() => {
+        createHandler(() => 'x', {errorFormatter: '{0}'})
+      }, /"errorFormatter" option must be a function/)
+    })
     it('should return a function when parameters are valid', function () {
       assert(typeof createHandler(() => 'x') === 'function')
     })
@@ -213,6 +218,24 @@ describe('agw-lambda-proxy', function () {
         .then((response) => {
           assertResponseBody(response, {
             message: 'not expecting log link'
+          })
+          assert.equal(response.statusCode, 500, 'Default error status code should be 500')
+          assert.deepEqual(response.headers, defaultHeaders, 'Default headers should be returned when response doesn\'t specify headers')
+        })
+    })
+
+    it('Should return customized error message', function () {
+      return asPromise(callback => createHandler(() => {
+        const er = new Error('should not be exposed')
+        return Promise.reject(er)
+      }, {
+        cloudWatchLogLinks: false,
+        logErrors: false,
+        errorFormatter: () => 'internal error'
+      })({}, context, callback))
+        .then((response) => {
+          assertResponseBody(response, {
+            message: 'internal error'
           })
           assert.equal(response.statusCode, 500, 'Default error status code should be 500')
           assert.deepEqual(response.headers, defaultHeaders, 'Default headers should be returned when response doesn\'t specify headers')
