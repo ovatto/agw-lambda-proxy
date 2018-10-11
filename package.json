@@ -1,6 +1,6 @@
 {
   "name": "agw-lambda-proxy",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "AWS API Gateway Lambda Proxy Integration module",
   "main": "index.js",
   "scripts": {
